@@ -99,7 +99,7 @@ func (dataStore DataStore) GetUserMongo (socialNumber string)(User, errorStatus.
 // UpdateUserMongo updates the user data.
 // The parameters are the new data or the updated one.
 // The return will be the status of the request in the errorMessage.
-func (dataStore DataStore) UpdateUserMongo (socialNumber string, user User)(errorStatus.ErrorMessage) {
+func (dataStore DataStore) PatchUserMongo (socialNumber string, user User)(errorStatus.ErrorMessage) {
 	log.WithFields(log.Fields{
 		"socialNumber": socialNumber,
 		"user":         user,

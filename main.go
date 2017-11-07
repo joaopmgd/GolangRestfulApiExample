@@ -35,7 +35,7 @@ func main (){
 	// Get User
 	r.GET("/api/user", getUser)
 	// Update User Data
-	r.PATCH("/api/user", updateUser)
+	r.PATCH("/api/user", patchUser)
 	// Delete User
 	r.DELETE("/api/user", deleteUser)
 	// Initialize Server
@@ -99,8 +99,8 @@ func getUser(c *gin.Context) {
 // updateUser update user with the selected data.
 // The body of the request must have the updated data.
 // The return will be an error or Accepted.
-func updateUser(c *gin.Context) {
-	log.Info("[Function] updateUser")
+func patchUser(c *gin.Context) {
+	log.Info("[Function] patchUser")
 
 	var user mongoDB.User
 
@@ -109,7 +109,14 @@ func updateUser(c *gin.Context) {
 
 	logRequest(c.Request.Header, user)
 
-	if user.Name == "" && user.SocialNumber == "" && user.Age == "" && user.Phones == nil &&
+	if socialNumber != user.SocialNumber{
+		err := errorStatus.ErrorSocialNumberCannotBeChanged()
+		c.JSON(err.HTTPStatus, err)
+		log.Info(toJSON(err))
+		return
+	}
+
+	if user.Name == "" && user.Age == "" && user.Phones == nil &&
 		user.Address.Country == "" && user.Address.State == "" && user.Address.StreetName == "" &&
 		user.Address.ZipCode == "" && user.Address.StreetNumber == ""{
 		em := errorStatus.ErrorMissingBodyValues()
@@ -123,7 +130,7 @@ func updateUser(c *gin.Context) {
 		log.WithFields(log.Fields{"socialNumber": socialNumber}).Info(toJSON(em))
 		return
 	}
-	err := service.UpdateUserService(socialNumber, user)
+	err := service.PatchUserService(socialNumber, user)
 	if err.HTTPStatus != 200 {
 		c.JSON(err.HTTPStatus, err)
 	} else {

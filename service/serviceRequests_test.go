@@ -76,6 +76,9 @@ var address_user_04 = mongoDB.Address{
 	State: "PR",
 }
 
+var new_name_user_01 = "Test_User_Name_01"
+var fake_social_number = "00000-00"
+
 // 1 - Try to insert 4 new unique users
 func TestInsertNewUserService (t *testing.T){
 	err := PostNewUserService(user_01)
@@ -88,13 +91,57 @@ func TestInsertNewUserService (t *testing.T){
 	assert.Equal(t, 200, err.HTTPStatus)
 }
 
-// 2 - Try to insert a global feature that already exists
+// 2 - Try to insert a user that already exists
 func TestInsertNewUserServiceAlreadyExists (t *testing.T){
 	err := PostNewUserService(user_01)
 	assert.Equal(t, 409, err.HTTPStatus)
 }
 
-// 3 - Try to delete 4 users
+// 3 - Get and validate all 4 users
+func TestGetUserService (t *testing.T){
+	user1, err := GetUserService(user_01.SocialNumber)
+	assert.Equal(t, 200, err.HTTPStatus)
+	assert.Equal(t, user_01, user1)
+
+	user2, err := GetUserService(user_01.SocialNumber)
+	assert.Equal(t, 200, err.HTTPStatus)
+	assert.Equal(t, user_01, user2)
+
+	user3, err := GetUserService(user_01.SocialNumber)
+	assert.Equal(t, 200, err.HTTPStatus)
+	assert.Equal(t, user_01, user3)
+
+	user4, err := GetUserService(user_01.SocialNumber)
+	assert.Equal(t, 200, err.HTTPStatus)
+	assert.Equal(t, user_01, user4)
+}
+
+// 4 - Update a user name
+func TestPatchUserService (t *testing.T){
+	err := PatchUserService(user_01.SocialNumber, mongoDB.User{Name:new_name_user_01})
+	assert.Equal(t, 200, err.HTTPStatus)
+}
+
+// 5 - Try to update a user that doesnt exist
+func TestPatchUserServiceDoesntExist (t *testing.T){
+	err := PatchUserService(fake_social_number, mongoDB.User{Name:new_name_user_01})
+	assert.Equal(t, 404, err.HTTPStatus)
+}
+
+// 6 - Verifies if the user was updated
+func TestGetUserServicePatched (t *testing.T){
+	user1, err := GetUserService(user_01.SocialNumber)
+	assert.Equal(t, 200, err.HTTPStatus)
+	assert.Equal(t, user1.Name, new_name_user_01)
+}
+
+// 7 - Try to get a user that does not exist
+func TestGetUserServiceDoesntExist (t *testing.T){
+	_, err := GetUserService("")
+	assert.Equal(t, 404, err.HTTPStatus)
+}
+
+// 8 - Try to delete 4 users
 func TestDeleteUserService (t *testing.T){
 	err := DeleteUserService(user_01.SocialNumber)
 	assert.Equal(t, 200, err.HTTPStatus)
@@ -106,14 +153,8 @@ func TestDeleteUserService (t *testing.T){
 	assert.Equal(t, 200, err.HTTPStatus)
 }
 
-// 3 - Try to a user that does not exists
+// 9 - Try to a user that does not exists
 func TestDeleteUserServiceDoesntExist (t *testing.T){
 	err := DeleteUserService(user_01.SocialNumber)
 	assert.Equal(t, 404, err.HTTPStatus)
 }
-
-// TODO: POST User / DELETE User / PATCH User / GET User with nonexistent requests parameters.
-// TODO: GET User that exists and validate and GET User that does Not Exists
-// TODO: PATCH The user that exists and Validate with a GET, Update the User that does Not Exists
-// TODO: Try to PATCH the SocialNumber, should not be possible
-// TODO: To initiate the test the database must not have the users described in the test, and in the end they must be deleted

@@ -39,14 +39,14 @@ func GetUserService (socialNumber string)(mongoDB.User, errorStatus.ErrorMessage
 	return dataStore.GetUserMongo(socialNumber)
 }
 
-func UpdateUserService (socialNumber string, user mongoDB.User)(errorStatus.ErrorMessage){
+func PatchUserService (socialNumber string, user mongoDB.User)(errorStatus.ErrorMessage){
 	dataStore, err := mongoDB.GetConnection()
 	if err.HTTPStatus != 200 {
 		log.Info("Database connection error. URI: localhost.")
 		return err
 	}
 	defer dataStore.CloseConnection()
-	return dataStore.UpdateUserMongo(socialNumber, user)
+	return dataStore.PatchUserMongo(socialNumber, user)
 }
 
 func DeleteUserService (socialNumber string)(errorStatus.ErrorMessage){

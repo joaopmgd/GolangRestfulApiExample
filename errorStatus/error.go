@@ -70,6 +70,16 @@ func ErrorUserDoesNotExist ()(ErrorMessage) {
 	return err
 }
 
+func ErrorSocialNumberCannotBeChanged ()(ErrorMessage) {
+	err := ErrorMessage{HTTPStatus: 404,
+		Code: "SOCIAL_NUMBER_CHANGE_NOT_POSSIBLE.ERROR",
+		Title: "Social Number Change",
+		Message: "The social number cannot be changed.",
+	}
+	log.Info(err)
+	return err
+}
+
 func ErrorUserAlreadyExists ()(ErrorMessage) {
 	err := ErrorMessage{
 		HTTPStatus: 409,
