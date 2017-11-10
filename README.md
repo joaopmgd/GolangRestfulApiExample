@@ -94,3 +94,24 @@ socialNumber: 88877766600
 
 Unit and Integration Tests are being written within each service.
 A script is being made that the test and its verification with the database must pass it all.
+
+
+## Running on Docker
+
+To run on Docker we can run the following commands:
+
+To build a Go image in Linux (if you are in another system)
+```
+CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+```
+
+Change the built image to GolangRestfulApiExample 
+To build a Docker Image with the Go image and run it in the background:
+```
+docker build -t golang/restful-api-example .
+docker run -d -p 8080:80 golang/restful-api-example
+```
+
+That is it, the User CRUD Microservice built with Go and MongoDB is now running in a container and can be deployed in the cloud for easy access.
+
+Thanks ;D
