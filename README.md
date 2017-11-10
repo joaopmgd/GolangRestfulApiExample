@@ -103,6 +103,7 @@ To run on Docker we can run the following commands:
 To build a Go image in Linux (if you are in another system)
 ```
 CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+go build -v
 ```
 
 Change the built image to GolangRestfulApiExample 
